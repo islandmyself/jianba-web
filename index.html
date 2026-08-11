@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#fafaf9">
 <meta name="description" content="你就健吧 — 轻量健身记录小程序网页版:训练、饮食、步数、睡眠、每日评分,数据仅存本地浏览器">
 <title>你就健吧</title>
-<link rel="stylesheet" href="css/style.css?v=3>
+<link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 <nav id="nav" style="display:none">
@@ -109,22 +109,22 @@
   }
 })()
 </script>
-<script src="js/bundle.js?v=3></script>
-<script src="js/ui.js?v=3></script>
-<script src="js/app.js?v=3></script>
-<script src="js/pages/onboard.js?v=3></script>
-<script src="js/pages/index.js?v=3></script>
-<script src="js/pages/training.js?v=3></script>
-<script src="js/pages/training-record.js?v=3></script>
-<script src="js/pages/diet.js?v=3></script>
-<script src="js/pages/diet-add.js?v=3></script>
-<script src="js/pages/profile.js?v=3></script>
-<script src="js/pages/day-detail.js?v=3></script>
-<script src="js/pages/bmr.js?v=3></script>
-<script src="js/pages/bmr-detail.js?v=3></script>
-<script src="js/pages/steps.js?v=3></script>
-<script src="js/pages/score-detail.js?v=3></script>
-<script src="js/pages/calorie-intro.js?v=3></script>
+<script src="js/bundle.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
+<script src="js/pages/onboard.js?v=4"></script>
+<script src="js/pages/index.js?v=4"></script>
+<script src="js/pages/training.js?v=4"></script>
+<script src="js/pages/training-record.js?v=4"></script>
+<script src="js/pages/diet.js?v=4"></script>
+<script src="js/pages/diet-add.js?v=4"></script>
+<script src="js/pages/profile.js?v=4"></script>
+<script src="js/pages/day-detail.js?v=4"></script>
+<script src="js/pages/bmr.js?v=4"></script>
+<script src="js/pages/bmr-detail.js?v=4"></script>
+<script src="js/pages/steps.js?v=4"></script>
+<script src="js/pages/score-detail.js?v=4"></script>
+<script src="js/pages/calorie-intro.js?v=4"></script>
 <script>
   ;[
     ['/onboard', 'onboard'], ['/index', 'index'], ['/training', 'training'],
@@ -135,6 +135,13 @@
   ].forEach(([p, key]) => App.register(p, Pages[key]))
   if (!__jianba('data').getProfile().onboarded) location.hash = '#/onboard'
   App.start()
+  // 数据兜底:localStorage 被浏览器清理时,从 IndexedDB 备份自动恢复(用户无需重填资料)
+  __jianba('data').restoreFromBackup().then(restored => {
+    if (!restored || !restored.profile || !restored.profile.onboarded) return
+    const cur = location.hash.replace(/^#/, '') || '/index'
+    if (cur === '/onboard') location.hash = '#/index' // 刚被强制进引导页 → 已恢复,直接回首页
+    else App.render()
+  })
 </script>
 </body>
 </html>

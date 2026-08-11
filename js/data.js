@@ -42,8 +42,53 @@ const DEFAULT = {
 function readStorage() {
   try { return JSON.parse(localStorage.getItem(KEY)) } catch (e) { return null }
 }
+// IndexedDB 备份:部分手机浏览器/清理工具的自动清理会清掉 localStorage 但保留 IndexedDB,
+// 双写保证数据能跨会话恢复(独立 DB 'jianleme_backup',与照片库互不干扰;失败静默)
+const BAK_KEY = 'jianleme_data'
+let _bakDb = null
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    if (_bakDb) { resolve(_bakDb); return }
+    try {
+      const req = indexedDB.open('jianleme_backup', 1)
+      req.onupgradeneeded = () => { req.result.createObjectStore('kv') }
+      req.onsuccess = () => { _bakDb = req.result; resolve(_bakDb) }
+      req.onerror = () => reject(req.error)
+    } catch (e) { reject(e) }
+  })
+}
+function idbPut(key, value) {
+  return idbOpen().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction('kv', 'readwrite')
+    tx.objectStore('kv').put(value, key)
+    tx.oncomplete = resolve
+    tx.onerror = () => reject(tx.error)
+  })).catch(() => {})
+}
+function idbGet(key) {
+  return idbOpen().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction('kv', 'readonly')
+    const req = tx.objectStore('kv').get(key)
+    req.onsuccess = () => resolve(req.result)
+    req.onerror = () => reject(req.error)
+  })).catch(() => null)
+}
+
 function writeStorage(data) {
-  localStorage.setItem(KEY, JSON.stringify(data))
+  const str = JSON.stringify(data)
+  try { localStorage.setItem(KEY, str) } catch (e) {}
+  idbPut(BAK_KEY, str) // 异步备份,失败静默(如 node 测试环境无 indexedDB)
+}
+
+// 启动时调用:localStorage 被浏览器清理后,从 IndexedDB 备份恢复(异步,返回恢复的数据或 null)
+function restoreFromBackup() {
+  return idbGet(BAK_KEY).then(raw => {
+    if (!raw) return null
+    const data = JSON.parse(raw)
+    try { localStorage.setItem(KEY, raw) } catch (e) {}
+    cache = data
+    return data
+  }).catch(() => null)
 }
 
 // 逐条补齐每日记录基础字段,兼容老数据缺字段
@@ -85,6 +130,10 @@ function resetAll() {
   try { localStorage.removeItem(KEY) } catch (e) {}
   try { photoStore.clear() } catch (e) {}
   cache = null
+  idbOpen().then(db => new Promise(resolve => {
+    try { db.transaction('kv', 'readwrite').objectStore('kv').delete(BAK_KEY) } catch (e) {}
+    resolve()
+  })).catch(() => {})
 }
 
 // 删除饮食照片(仅限 /photos/ 逻辑路径;IDB 异步删除,fire-and-forget)
@@ -480,5 +529,6 @@ module.exports = {
   getCustomFoods, addCustomFood, removeCustomFood,
   getVersion, getWeightHistory, deleteWeightEntry, getLastWeightDate, getWeightOnDate, getFrequentFoods,
   getScoreForDate,
+  restoreFromBackup,
   updateSleep, deleteSleep
 }
