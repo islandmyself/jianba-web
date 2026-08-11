@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fafaf9">
+<meta name="description" content="你就健吧 — 轻量健身记录小程序网页版:训练、饮食、步数、睡眠、每日评分,数据仅存本地浏览器">
+<title>你就健吧</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav id="nav" style="display:none">
+  <button id="back-btn" onclick="App.back()">‹</button>
+  <span id="nav-title"></span>
+</nav>
+<div id="app"></div>
+<div id="tabbar">
+  <div class="tab-item" data-tab="/index" onclick="App.go('/index')">首页</div>
+  <div class="tab-item" data-tab="/training" onclick="App.go('/training')">训练</div>
+  <div class="tab-item" data-tab="/diet" onclick="App.go('/diet')">饮食</div>
+  <div class="tab-item" data-tab="/profile" onclick="App.go('/profile')">我的</div>
+</div>
+<script src="js/bundle.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pages/onboard.js"></script>
+<script src="js/pages/index.js"></script>
+<script src="js/pages/training.js"></script>
+<script src="js/pages/training-record.js"></script>
+<script src="js/pages/diet.js"></script>
+<script src="js/pages/diet-add.js"></script>
+<script src="js/pages/profile.js"></script>
+<script src="js/pages/day-detail.js"></script>
+<script src="js/pages/bmr.js"></script>
+<script src="js/pages/bmr-detail.js"></script>
+<script src="js/pages/steps.js"></script>
+<script src="js/pages/score-detail.js"></script>
+<script src="js/pages/calorie-intro.js"></script>
+<script>
+  ;[
+    ['/onboard', 'onboard'], ['/index', 'index'], ['/training', 'training'],
+    ['/training-record', 'training-record'], ['/diet', 'diet'], ['/diet-add', 'diet-add'],
+    ['/profile', 'profile'], ['/day-detail', 'day-detail'], ['/bmr', 'bmr'],
+    ['/bmr-detail', 'bmr-detail'], ['/steps', 'steps'], ['/score-detail', 'score-detail'],
+    ['/calorie-intro', 'calorie-intro']
+  ].forEach(([p, key]) => App.register(p, Pages[key]))
+  if (!__jianba('data').getProfile().onboarded) location.hash = '#/onboard'
+  App.start()
+</script>
+</body>
+</html>
