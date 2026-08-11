@@ -96,6 +96,17 @@
       return out
     }
   }
+  if (!Array.prototype.flatMap) {
+    Array.prototype.flatMap = function (fn) {
+      var out = [], i, r, j
+      for (i = 0; i < this.length; i++) {
+        r = fn(this[i], i, this)
+        if (Array.isArray(r)) { for (j = 0; j < r.length; j++) out.push(r[j]) }
+        else out.push(r)
+      }
+      return out
+    }
+  }
 })()
 </script>
 <script src="js/bundle.js"></script>

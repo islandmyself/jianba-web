@@ -97,7 +97,7 @@ const CROSS_GROUPS = [
         const bh = parseInt(c.todaySleep.bedTime.split(':')[0])
         if (bh >= 0 && bh < 6 && c.todayDiets.some(d => d.mealType === 'snack') && c.diet.level !== 'silent') { c.diet.pct = Math.max(0, c.diet.pct - 8); c.crossEffects.push('深夜进食影响睡眠') }
         if (c.todaySleep.durationHours < 6 && c.diet.level !== 'silent') {
-          const junkC = c.todayDiets.flatMap(d => d.items || []).filter(it => JUNK_FOOD.includes(it.food)).length
+          const junkC = c.todayDiets.reduce((acc, d) => acc.concat(d.items || []), []).filter(it => JUNK_FOOD.includes(it.food)).length
           if (junkC >= 2 && c.diet.label) c.diet.label = c.diet.label + '。睡眠不足容易想吃高热量食物'
         }
       } }
@@ -351,7 +351,7 @@ function scoreHybridTraining(profile, todayRecord, history, trainingLogs, weight
 // === 6.6 饮食质量 ===
 function scoreDiet(todayDiets, profile) {
   if (!todayDiets||!todayDiets.length) return {pct:0,level:'silent',label:''}
-  const allItems=todayDiets.flatMap(d=>d.items||[])
+  const allItems=todayDiets.reduce((acc,d)=>acc.concat(d.items||[]),[])
   const totalKcal=todayDiets.reduce((s,d)=>s+(d.totalKcal||0),0)
 
   let proteinKcal=0

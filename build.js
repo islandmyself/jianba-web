@@ -6,9 +6,17 @@ const path = require('path')
 const mods = ['calc.js', 'score.js', 'foods.js', 'photo-store.js', 'data.js']
 const parts = [`/* 自动生成 by build.js — 勿手改,源文件在 js/ 下 */`,
 `(function () {
+  // 懒加载语义(标准 CommonJS):__define 只注册,首次 __require 时才执行模块体并缓存。
+  // 立即执行语义会让依赖"排在后面"的模块拿到 undefined(如 score require foods)
   const __mods = {}
-  function __define(name, fn) { const m = { exports: {} }; fn(m, m.exports); __mods[name] = m.exports }
-  function __require(name) { return __mods[String(name).replace(/^\\.\\//, '').replace(/\\.js$/, '')] }
+  function __define(name, fn) { __mods[name] = { fn: fn, loaded: false, exports: {} } }
+  function __require(name) {
+    name = String(name).replace(/^\\.\\//, '').replace(/\\.js$/, '')
+    const m = __mods[name]
+    if (!m) return undefined
+    if (!m.loaded) { m.loaded = true; m.fn(m, m.exports) }
+    return m.exports
+  }
   window.__jianba = __require
 `]
 for (const f of mods) {

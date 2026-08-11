@@ -1,8 +1,16 @@
 /* 自动生成 by build.js — 勿手改,源文件在 js/ 下 */
 (function () {
+  // 懒加载语义(标准 CommonJS):__define 只注册,首次 __require 时才执行模块体并缓存。
+  // 立即执行语义会让依赖"排在后面"的模块拿到 undefined(如 score require foods)
   const __mods = {}
-  function __define(name, fn) { const m = { exports: {} }; fn(m, m.exports); __mods[name] = m.exports }
-  function __require(name) { return __mods[String(name).replace(/^\.\//, '').replace(/\.js$/, '')] }
+  function __define(name, fn) { __mods[name] = { fn: fn, loaded: false, exports: {} } }
+  function __require(name) {
+    name = String(name).replace(/^\.\//, '').replace(/\.js$/, '')
+    const m = __mods[name]
+    if (!m) return undefined
+    if (!m.loaded) { m.loaded = true; m.fn(m, m.exports) }
+    return m.exports
+  }
   window.__jianba = __require
 
 __define('calc', function (module, exports) {
@@ -232,7 +240,7 @@ const CROSS_GROUPS = [
         const bh = parseInt(c.todaySleep.bedTime.split(':')[0])
         if (bh >= 0 && bh < 6 && c.todayDiets.some(d => d.mealType === 'snack') && c.diet.level !== 'silent') { c.diet.pct = Math.max(0, c.diet.pct - 8); c.crossEffects.push('深夜进食影响睡眠') }
         if (c.todaySleep.durationHours < 6 && c.diet.level !== 'silent') {
-          const junkC = c.todayDiets.flatMap(d => d.items || []).filter(it => JUNK_FOOD.includes(it.food)).length
+          const junkC = c.todayDiets.reduce((acc, d) => acc.concat(d.items || []), []).filter(it => JUNK_FOOD.includes(it.food)).length
           if (junkC >= 2 && c.diet.label) c.diet.label = c.diet.label + '。睡眠不足容易想吃高热量食物'
         }
       } }
@@ -486,7 +494,7 @@ function scoreHybridTraining(profile, todayRecord, history, trainingLogs, weight
 // === 6.6 饮食质量 ===
 function scoreDiet(todayDiets, profile) {
   if (!todayDiets||!todayDiets.length) return {pct:0,level:'silent',label:''}
-  const allItems=todayDiets.flatMap(d=>d.items||[])
+  const allItems=todayDiets.reduce((acc,d)=>acc.concat(d.items||[]),[])
   const totalKcal=todayDiets.reduce((s,d)=>s+(d.totalKcal||0),0)
 
   let proteinKcal=0
