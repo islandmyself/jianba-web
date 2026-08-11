@@ -51,6 +51,8 @@ const App = {
     const isTab = !!page.tab
     document.getElementById('nav').style.display = isTab ? 'none' : 'flex'
     document.getElementById('tabbar').style.display = isTab ? 'flex' : 'none'
+    // 子页顶部是 fixed 返回栏,内容区留出导航高度,避免首行内容被遮挡
+    root.style.paddingTop = isTab ? '' : (document.getElementById('nav').offsetHeight + 16) + 'px'
     ui.setNavTitle(page.title || '')
     document.querySelectorAll('.tab-item').forEach(t => {
       t.classList.toggle('active', t.dataset.tab === path)
