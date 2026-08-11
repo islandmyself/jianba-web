@@ -369,6 +369,12 @@ body {
 .panel-total-kcal { font-size: 18px; font-weight: 700; color: #f97316; }
 .panel-save-btn { background: #f97316; color: #fff; font-size: 14px; font-weight: 600; padding: 9px 22px; border-radius: 8px; cursor: pointer; }
 
+/* === Android 键盘兼容:键盘弹出时隐藏 fixed 底部元素(收起后由 app.js 重排恢复) === */
+body.kb-open .float-bar,
+body.kb-open .panel,
+body.kb-open .panel-backdrop,
+body.kb-open #tabbar { display: none !important; }
+
 /* === 我的 === */
 .profile-head { text-align: center; }
 .nickname { display: block; font-size: 20px; font-weight: 700; color: #1c1917; margin-bottom: 4px; }

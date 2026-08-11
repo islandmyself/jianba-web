@@ -250,6 +250,7 @@ Pages['diet-add'] = {
   },
 
   addItem(item) {
+    this._focusSearch = false // 添加后勿把焦点还回搜索框:否则键盘反复弹起、float-bar 被 kb-open 隐藏,用户点不到保存
     this.data.selectedItems = [...this.data.selectedItems, item]
     this.data.totalKcal = this.data.selectedItems.reduce((s, i) => s + i.kcal, 0)
     ui.vibrate()
