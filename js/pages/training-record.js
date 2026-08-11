@@ -1,3 +1,4 @@
+;(function () {
 /* 训练记录页 — 移植自小程序 pages/training-record(含自定义动作) */
 const calc = __jianba('calc')
 const dataStore = __jianba('data')
@@ -240,3 +241,5 @@ Pages['training-record'] = {
     })
   }
 }
+
+})();

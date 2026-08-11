@@ -1,3 +1,4 @@
+;(function () {
 /* 饮食记录页 — 移植自小程序 pages/diet-add(搜索/份量/自定义/拍照/浮动底栏) */
 const foods = __jianba('foods')
 const dataStore = __jianba('data')
@@ -325,3 +326,5 @@ Pages['diet-add'] = {
     setTimeout(() => App.back(), 900)
   }
 }
+
+})();

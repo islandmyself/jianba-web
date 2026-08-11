@@ -1,3 +1,4 @@
+;(function () {
 /* 饮食 tab — 移植自小程序 pages/diet(照片经 photo-store 异步加载显示) */
 const dataStore = __jianba('data')
 const photoStore = __jianba('photo-store')
@@ -166,3 +167,5 @@ Pages['diet'] = {
     })
   }
 }
+
+})();

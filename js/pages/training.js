@@ -1,3 +1,4 @@
+;(function () {
 /* 训练 tab — 移植自小程序 pages/training */
 const dataStore = __jianba('data')
 
@@ -98,3 +99,5 @@ Pages['training'] = {
     })
   }
 }
+
+})();

@@ -1,3 +1,4 @@
+;(function () {
 /* 步数页 — 移植自小程序 pages/steps(7 天柱状图 + 手动输入) */
 const dataStore = __jianba('data')
 
@@ -149,3 +150,5 @@ Pages['steps'] = {
     })
   }
 }
+
+})();

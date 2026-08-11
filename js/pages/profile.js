@@ -1,3 +1,4 @@
+;(function () {
 /* 我的 tab — 移植自小程序 pages/profile */
 const dataStore = __jianba('data')
 
@@ -200,3 +201,5 @@ Pages['profile'] = {
     </div>`
   }
 }
+
+})();

@@ -1,3 +1,4 @@
+;(function () {
 /* 热量详情页 — 移植自小程序 pages/bmr-detail(摄入/消耗时段时间轴) */
 const calc = __jianba('calc')
 const dataStore = __jianba('data')
@@ -136,3 +137,5 @@ Pages['bmr-detail'] = {
     </div>`
   }
 }
+
+})();

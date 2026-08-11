@@ -1,3 +1,4 @@
+;(function () {
 /* 热量缺口科普页 — 移植自小程序 pages/calorie-intro(4 屏,触摸滑动切换) */
 const dataStore = __jianba('data')
 
@@ -177,3 +178,5 @@ Pages['calorie-intro'] = {
     else if (dx > 0 && this.data.current > 0) { this.data.current--; App.render() }
   }
 }
+
+})();

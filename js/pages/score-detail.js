@@ -1,3 +1,4 @@
+;(function () {
 /* 评分详情页 — 移植自小程序 pages/score-detail
    onLoad 支持 ?date=YYYY-MM-DD(从某日详情进入),不带 date 则显示今天 */
 const dataStore = __jianba('data')
@@ -122,3 +123,5 @@ Pages['score-detail'] = {
     </div>`
   }
 }
+
+})();

@@ -1,3 +1,4 @@
+;(function () {
 /* 首次引导 — 移植自小程序 pages/onboard */
 const dataStore = __jianba('data')
 
@@ -55,3 +56,5 @@ Pages['onboard'] = {
     App.go('/index')
   }
 }
+
+})();

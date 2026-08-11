@@ -1,3 +1,4 @@
+;(function () {
 /* 某日详情 — 移植自小程序 pages/day-detail(hero 滚动缩放、睡眠/训练/饮食行内编辑) */
 const calc = __jianba('calc')
 const dataStore = __jianba('data')
@@ -349,3 +350,5 @@ Pages['day-detail'] = {
     })
   }
 }
+
+})();

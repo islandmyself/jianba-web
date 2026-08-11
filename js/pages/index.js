@@ -1,3 +1,4 @@
+;(function () {
 /* 首页仪表盘 — 移植自小程序 pages/index,交互/提醒/评分逻辑一致 */
 const dataStore = __jianba('data')
 const calc = __jianba('calc')
@@ -355,3 +356,5 @@ Pages['index'] = {
   onDayTap(date) { App.go('/day-detail?date=' + date) },
   onScoreTap() { App.go('/score-detail') }
 }
+
+})();

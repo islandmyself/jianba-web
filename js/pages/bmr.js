@@ -1,3 +1,4 @@
+;(function () {
 /* 基础代谢页 — 移植自小程序 pages/bmr(24h 代谢曲线) */
 const calc = __jianba('calc')
 const dataStore = __jianba('data')
@@ -99,3 +100,5 @@ Pages['bmr'] = {
     </div>`
   }
 }
+
+})();
