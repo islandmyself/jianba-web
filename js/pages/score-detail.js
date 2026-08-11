@@ -40,11 +40,7 @@ Pages['score-detail'] = {
     const scoreOutput = dataStore.getScoreForDate(date)
     const profile = dataStore.getProfile()
     const dims = scoreOutput.dimensions || {}
-    const dimList = ['calorie', 'training', 'diet', 'sleep', 'habit'].map(k => ({
-      key: k,
-      ...DIM_META[k],
-      data: dims[k] || null
-    }))
+    const dimList = ['calorie', 'training', 'diet', 'sleep', 'habit'].map(k => (Object.assign({ key: k }, DIM_META[k], { data: dims[k] || null })))
     this.data.scoreOutput = scoreOutput
     this.data.dimList = dimList
     this.data.profile = profile

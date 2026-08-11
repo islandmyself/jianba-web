@@ -20,7 +20,7 @@ Pages['diet-add'] = {
     const m = String(now.getMinutes()).padStart(2, '0')
     const recordTime = h + ':' + m
 
-    this.data = { ...this.data, editTs: 0, isEdit: false, selectedItems: [], photoPath: '', recordTime, mealType: '', barExpanded: false, searchQuery: '', searchResults: [], servings: foods.COMMON_SERVINGS, frequentFoods: dataStore.getFrequentFoods(6), customFoods: dataStore.getCustomFoods() }
+    this.data = Object.assign({}, this.data, { editTs: 0, isEdit: false, selectedItems: [], photoPath: '', recordTime: recordTime, mealType: '', barExpanded: false, searchQuery: '', searchResults: [], servings: foods.COMMON_SERVINGS, frequentFoods: dataStore.getFrequentFoods(6), customFoods: dataStore.getCustomFoods() })
     if (params && params.ts) {
       const ts = parseInt(params.ts)
       const entry = dataStore.getAllDietEntries().find(e => e.ts === ts)
@@ -288,19 +288,19 @@ Pages['diet-add'] = {
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = 'image/*'
-    input.onchange = async () => {
+    input.onchange = () => {
       const file = input.files[0]
       if (!file) return
-      try {
-        const dataURL = await photoStore.compressImage(file, 800)
+      photoStore.compressImage(file, 800).then(dataURL => {
         const path = '/photos/' + Date.now() + '.jpg'
-        await photoStore.save(path, dataURL)
-        const oldPath = this.data.photoPath
-        if (oldPath) dataStore.deletePhotoFile(oldPath) // 换新照片,清掉旧图
-        this.data.photoPath = path
-        App.render()
-        ui.toast('照片已添加')
-      } catch (e) { ui.toast('照片保存失败，请重试') }
+        return photoStore.save(path, dataURL).then(() => {
+          const oldPath = this.data.photoPath
+          if (oldPath) dataStore.deletePhotoFile(oldPath) // 换新照片,清掉旧图
+          this.data.photoPath = path
+          App.render()
+          ui.toast('照片已添加')
+        })
+      }).catch(() => { ui.toast('照片保存失败，请重试') })
     }
     input.click()
   },

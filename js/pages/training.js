@@ -16,12 +16,11 @@ Pages['training'] = {
     const todayKcal = today.reduce((s, t) => s + t.totalKcal, 0)
     const all = dataStore.getAllTrainings()
     const pageSize = this.data.pageSize
-    this.data = {
-      ...this.data,
+    this.data = Object.assign({}, this.data, {
       trainings: all.slice(0, pageSize),
-      todayKcal,
+      todayKcal: todayKcal,
       hasMore: all.length > pageSize
-    }
+    })
     this._allTrainings = all
   },
 

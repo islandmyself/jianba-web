@@ -278,7 +278,7 @@ Pages['day-detail'] = {
   },
 
   onEditFieldChange(field, v) {
-    this.data.editForms = { ...this.data.editForms, [field]: v }
+    this.data.editForms = Object.assign({}, this.data.editForms, { [field]: v })
   },
 
   onSaveEdit() {

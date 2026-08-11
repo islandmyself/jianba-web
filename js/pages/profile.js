@@ -19,7 +19,7 @@ Pages['profile'] = {
 
   onEdit() {
     this.data.editing = true
-    this.data.editForm = { ...this.data.profile }
+    this.data.editForm = Object.assign({}, this.data.profile)
     App.render()
   },
 
@@ -33,11 +33,11 @@ Pages['profile'] = {
     if (field === 'heightCm' || field === 'weightKg' || field === 'age') {
       value = v === '' ? '' : Number(v)
     }
-    this.data.editForm = { ...this.data.editForm, [field]: value }
+    this.data.editForm = Object.assign({}, this.data.editForm, { [field]: value })
   },
 
-  onGenderTap(v) { this.data.editForm = { ...this.data.editForm, gender: v }; App.render() },
-  onOptTap(field, v) { this.data.editForm = { ...this.data.editForm, [field]: v }; App.render() },
+  onGenderTap(v) { this.data.editForm = Object.assign({}, this.data.editForm, { gender: v }); App.render() },
+  onOptTap(field, v) { this.data.editForm = Object.assign({}, this.data.editForm, { [field]: v }); App.render() },
 
   onSaveProfile() {
     const form = this.data.editForm

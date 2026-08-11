@@ -20,6 +20,84 @@
   <div class="tab-item" data-tab="/diet" onclick="App.go('/diet')">饮食</div>
   <div class="tab-item" data-tab="/profile" onclick="App.go('/profile')">我的</div>
 </div>
+<script>
+/* 旧内核兼容垫片:补齐 ES2015+ 运行时缺失的 API(Android 老 WebView/微信老内核)
+   注意:本脚本必须保持 ES5 语法,老内核才能解析 */
+;(function () {
+  if (!Object.assign) {
+    Object.assign = function (target) {
+      var args = Array.prototype.slice.call(arguments, 1), i, k
+      for (i = 0; i < args.length; i++) {
+        for (k in args[i]) if (Object.prototype.hasOwnProperty.call(args[i], k)) target[k] = args[i][k]
+      }
+      return target
+    }
+  }
+  if (!String.prototype.padStart) {
+    String.prototype.padStart = function (len, ch) {
+      var s = String(this); ch = ch === undefined ? ' ' : String(ch)
+      while (s.length < len) s = ch + s
+      return s
+    }
+  }
+  if (!String.prototype.padEnd) {
+    String.prototype.padEnd = function (len, ch) {
+      var s = String(this); ch = ch === undefined ? ' ' : String(ch)
+      while (s.length < len) s = s + ch
+      return s
+    }
+  }
+  if (!Object.entries) {
+    Object.entries = function (obj) {
+      var out = [], k
+      for (k in obj) if (Object.prototype.hasOwnProperty.call(obj, k)) out.push([k, obj[k]])
+      return out
+    }
+  }
+  if (!Object.values) {
+    Object.values = function (obj) {
+      var out = [], k
+      for (k in obj) if (Object.prototype.hasOwnProperty.call(obj, k)) out.push(obj[k])
+      return out
+    }
+  }
+  if (!Object.fromEntries) {
+    Object.fromEntries = function (entries) {
+      var out = {}, i
+      for (i = 0; i < entries.length; i++) out[entries[i][0]] = entries[i][1]
+      return out
+    }
+  }
+  if (!Array.prototype.includes) {
+    Array.prototype.includes = function (item) { return this.indexOf(item) !== -1 }
+  }
+  if (!String.prototype.includes) {
+    String.prototype.includes = function (s) { return this.indexOf(s) !== -1 }
+  }
+  if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function (s) { return this.indexOf(s) === 0 }
+  }
+  if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function (s) { return this.slice(-s.length) === s }
+  }
+  if (!Array.prototype.find) {
+    Array.prototype.find = function (fn) { var i; for (i = 0; i < this.length; i++) if (fn(this[i], i, this)) return this[i]; return undefined }
+  }
+  if (!Array.prototype.findIndex) {
+    Array.prototype.findIndex = function (fn) { var i; for (i = 0; i < this.length; i++) if (fn(this[i], i, this)) return i; return -1 }
+  }
+  if (!Array.prototype.flat) {
+    Array.prototype.flat = function () {
+      var out = [], self = this, i
+      for (i = 0; i < self.length; i++) {
+        if (Array.isArray(self[i])) { var j; for (j = 0; j < self[i].length; j++) out.push(self[i][j]) }
+        else out.push(self[i])
+      }
+      return out
+    }
+  }
+})()
+</script>
 <script src="js/bundle.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/app.js"></script>

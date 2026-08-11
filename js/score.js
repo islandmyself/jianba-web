@@ -526,7 +526,7 @@ function calculateScore(input) {
 
   const depth = getDataDepth(allDailyRecords, today)
   const userType=determineUserType(history,trainingHistory)
-  const weights={...WEIGHTS[userType]}
+  const weights=Object.assign({}, WEIGHTS[userType])
   const dowAvgTable=buildDayOfWeekAvg(allDailyRecords,trainingHistory)
 
   const calorie=scoreCalorie(profile,todayRecord,history,weightHistory,today)

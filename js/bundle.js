@@ -661,7 +661,7 @@ function calculateScore(input) {
 
   const depth = getDataDepth(allDailyRecords, today)
   const userType=determineUserType(history,trainingHistory)
-  const weights={...WEIGHTS[userType]}
+  const weights=Object.assign({}, WEIGHTS[userType])
   const dowAvgTable=buildDayOfWeekAvg(allDailyRecords,trainingHistory)
 
   const calorie=scoreCalorie(profile,todayRecord,history,weightHistory,today)
@@ -1003,7 +1003,7 @@ function writeStorage(data) {
 function normalizeRecords(records) {
   const out = {}
   for (const [date, rec] of Object.entries(records || {})) {
-    out[date] = { ...BASE_RECORD, ...rec }
+    out[date] = Object.assign({}, BASE_RECORD, rec)
   }
   return out
 }
@@ -1014,8 +1014,8 @@ function load() {
   try {
     const raw = readStorage()
     if (raw) {
-      merged = { ...DEFAULT, ...raw }
-      merged.profile = { ...DEFAULT.profile, ...raw.profile }
+      merged = Object.assign({}, DEFAULT, raw)
+      merged.profile = Object.assign({}, DEFAULT.profile, raw.profile)
       merged.dailyRecords = normalizeRecords(raw.dailyRecords)
       merged.trainingLogs = raw.trainingLogs || []
       merged.dietLogs = raw.dietLogs || []
@@ -1051,7 +1051,7 @@ function getProfile() { return load().profile }
 function setProfile(partial) {
   const data = load()
   const oldWeight = data.profile.weightKg
-  data.profile = { ...data.profile, ...partial }
+  data.profile = Object.assign({}, data.profile, partial)
   if (partial.weightKg !== undefined && partial.weightKg !== oldWeight) {
     if (!data.weightHistory) data.weightHistory = []
     data.weightHistory.push({ date: todayStr(), weightKg: partial.weightKg })
@@ -1065,7 +1065,7 @@ function getTodayRecord() {
   const data = load()
   const today = todayStr()
   if (!data.dailyRecords[today]) {
-    data.dailyRecords[today] = { ...BASE_RECORD }
+    data.dailyRecords[today] = Object.assign({}, BASE_RECORD)
     save(data)
   }
   return data.dailyRecords[today]
@@ -1073,14 +1073,14 @@ function getTodayRecord() {
 
 function getRecordByDate(date) {
   const data = load()
-  return data.dailyRecords[date] || { ...BASE_RECORD }
+  return data.dailyRecords[date] || Object.assign({}, BASE_RECORD)
 }
 
 function updateTodayRecord(partial) {
   const data = load()
   const today = todayStr()
   if (!data.dailyRecords[today]) {
-    data.dailyRecords[today] = { ...BASE_RECORD }
+    data.dailyRecords[today] = Object.assign({}, BASE_RECORD)
   }
   Object.assign(data.dailyRecords[today], partial)
   save(data)
@@ -1096,14 +1096,13 @@ function addTraining(exercises, recordTime) {
   const data = load()
   const today = todayStr()
   const profile = data.profile
-  const exercisesWithKcal = exercises.map(ex => ({
-    ...ex,
+  const exercisesWithKcal = exercises.map(ex => (Object.assign({}, ex, {
     kcal: calc.calcExerciseCalories(ex.key, profile.weightKg, ex.sets, ex.reps, ex.met)
-  }))
+  })))
   const totalKcal = exercisesWithKcal.reduce((sum, ex) => sum + ex.kcal, 0)
   const record = { date: today, exercises: exercisesWithKcal, totalKcal, ts: Date.now(), time: recordTime || '' }
   data.trainingLogs.unshift(record)
-  if (!data.dailyRecords[today]) data.dailyRecords[today] = { ...BASE_RECORD }
+  if (!data.dailyRecords[today]) data.dailyRecords[today] = Object.assign({}, BASE_RECORD)
   data.dailyRecords[today].trainingKcal = (data.dailyRecords[today].trainingKcal || 0) + totalKcal
   save(data)
   return { record, totalKcal }
@@ -1124,7 +1123,7 @@ function addDietEntry(items, photoPath, recordTime, mealType) {
   const totalKcal = items.reduce((sum, item) => sum + item.kcal, 0)
   const record = { date: today, items, photoPath: photoPath || '', totalKcal, ts: Date.now(), time: recordTime || '', mealType: mealType || '' }
   data.dietLogs.unshift(record)
-  if (!data.dailyRecords[today]) data.dailyRecords[today] = { ...BASE_RECORD }
+  if (!data.dailyRecords[today]) data.dailyRecords[today] = Object.assign({}, BASE_RECORD)
   data.dailyRecords[today].dietKcal = (data.dailyRecords[today].dietKcal || 0) + totalKcal
   save(data)
   return { record, totalKcal }
@@ -1183,7 +1182,7 @@ function getYesterdayRecord() {
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
   const yest = `${d.getFullYear()}-${m}-${day}`
-  return data.dailyRecords[yest] || { ...BASE_RECORD }
+  return data.dailyRecords[yest] || Object.assign({}, BASE_RECORD)
 }
 
 function getHistory() {
@@ -1250,7 +1249,7 @@ function updateDietEntry(ts, items) {
   if (data.dailyRecords[oldEntry.date]) {
     data.dailyRecords[oldEntry.date].dietKcal = Math.max(0, (data.dailyRecords[oldEntry.date].dietKcal || 0) - oldEntry.totalKcal + newTotalKcal)
   }
-  data.dietLogs[idx] = { ...oldEntry, items, totalKcal: newTotalKcal }
+  data.dietLogs[idx] = Object.assign({}, oldEntry, { items: items, totalKcal: newTotalKcal })
   save(data)
   return true
 }
@@ -1264,7 +1263,7 @@ function updateDietEntryFull(ts, items, photoPath, recordTime, mealType) {
   if (data.dailyRecords[oldEntry.date]) {
     data.dailyRecords[oldEntry.date].dietKcal = Math.max(0, (data.dailyRecords[oldEntry.date].dietKcal || 0) - oldEntry.totalKcal + newTotalKcal)
   }
-  data.dietLogs[idx] = { ...oldEntry, items, photoPath: photoPath || oldEntry.photoPath, time: recordTime || oldEntry.time, totalKcal: newTotalKcal, mealType: mealType !== undefined ? mealType : oldEntry.mealType || '' }
+  data.dietLogs[idx] = Object.assign({}, oldEntry, { items: items, photoPath: photoPath || oldEntry.photoPath, time: recordTime || oldEntry.time, totalKcal: newTotalKcal, mealType: mealType !== undefined ? mealType : oldEntry.mealType || '' })
   save(data)
   return true
 }
@@ -1281,7 +1280,7 @@ function updateTrainingEntry(ts, exercises, recordTime) {
   if (data.dailyRecords[oldEntry.date]) {
     data.dailyRecords[oldEntry.date].trainingKcal = Math.max(0, (data.dailyRecords[oldEntry.date].trainingKcal || 0) - oldEntry.totalKcal + totalKcal)
   }
-  data.trainingLogs[idx] = { ...oldEntry, exercises, totalKcal, time: recordTime || oldEntry.time }
+  data.trainingLogs[idx] = Object.assign({}, oldEntry, { exercises: exercises, totalKcal: totalKcal, time: recordTime || oldEntry.time })
   save(data)
   return true
 }
@@ -1356,7 +1355,7 @@ function getScoreForDate(dateStr) {
   const data = load()
   const profile = data.profile
   const allRecords = data.dailyRecords
-  const todayRecord = allRecords[dateStr] || { ...BASE_RECORD }
+  const todayRecord = allRecords[dateStr] || Object.assign({}, BASE_RECORD)
   const todayTrainings = data.trainingLogs.filter(t => t.date === dateStr)
   const todayDiets = data.dietLogs.filter(d => d.date === dateStr)
   const pastDates = Object.keys(allRecords).filter(d => d < dateStr).sort()
@@ -1378,7 +1377,7 @@ function updateSleep(date, sleepData) {
   if (date > todayStr()) return false
   const data = load()
   if (!data.dailyRecords[date]) {
-    data.dailyRecords[date] = { ...BASE_RECORD }
+    data.dailyRecords[date] = Object.assign({}, BASE_RECORD)
   }
   data.dailyRecords[date].sleep = sleepData
   save(data)

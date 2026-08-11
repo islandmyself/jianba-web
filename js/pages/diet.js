@@ -19,13 +19,12 @@ Pages['diet'] = {
     const isToday = date === today
     const entries = dataStore.getDietByDate(date)
     const todayKcal = entries.reduce((s, e) => s + e.totalKcal, 0)
-    this.data = {
-      ...this.data,
-      entries,
-      todayKcal,
-      isToday,
+    this.data = Object.assign({}, this.data, {
+      entries: entries,
+      todayKcal: todayKcal,
+      isToday: isToday,
       dateLabel: this.formatDateLabel(date)
-    }
+    })
     this._photoMap = {} // ts → dataURL,异步加载
   },
 

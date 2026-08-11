@@ -20,7 +20,7 @@ Pages['training-record'] = {
     const m = String(now.getMinutes()).padStart(2, '0')
     const recordTime = h + ':' + m
 
-    this.data = { ...this.data, editTs: 0, isEdit: false, exerciseList: [], recordTime, showCustomForm: false, customName: '', selectedKey: '', selectedName: '', selectedMet: 0 }
+    this.data = Object.assign({}, this.data, { editTs: 0, isEdit: false, exerciseList: [], recordTime: recordTime, showCustomForm: false, customName: '', selectedKey: '', selectedName: '', selectedMet: 0 })
     if (params && params.ts) {
       const ts = parseInt(params.ts)
       const entry = dataStore.getAllTrainings().find(t => t.ts === ts)
@@ -45,7 +45,7 @@ Pages['training-record'] = {
       return { key: k, label: cat.label, exercises: [...defaultEx, ...customEx] }
     })
     this.data.categories = cats
-    if (!this.data.activeCat || !cats.some(c => c.key === this.data.activeCat)) this.data.activeCat = cats[0]?.key || ''
+    if (!this.data.activeCat || !cats.some(c => c.key === this.data.activeCat)) this.data.activeCat = (cats[0] && cats[0].key) || ''
   },
 
   render() {
